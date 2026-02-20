@@ -1,0 +1,29 @@
+.card {
+  font-family: arial;
+  font-size: 20px;
+  text-align: center;
+  color: black;
+  background-color: white;
+  border-radius: 10px;
+}
+
+/* Contenedor principal para evitar desbordamientos */
+#paper {
+  width: 100%;
+  max-width: 600px; /* O el ancho que prefieras */
+  margin: 0 auto;
+  overflow: hidden; /* Evita que el SVG "se salga" */
+}
+
+#paper svg {
+  width: 100% !important;
+  height: auto !important;
+  display: block;
+}
+
+/* Evitar que el modo lectura oculte el audio en el reverso */
+.reverso #audio {
+  display: block !important;
+  visibility: visible !important;
+  margin-top: 50px;
+}

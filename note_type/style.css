@@ -1,0 +1,410 @@
+/* Fuentes */
+
+/* a. Versión Regular */
+@font-face {
+  font-family: "Aptos-Embed";
+  src: url("_aptos-regular.ttf"); /* <--- Todo en minúsculas */
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* b. Versión Bold */
+@font-face {
+  font-family: "Aptos-Embed";
+  src: url("_aptos-bold.ttf"); /* <--- Todo en minúsculas */
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* c. Versión Italic */
+@font-face {
+  font-family: "Aptos-Embed";
+  src: url("_aptos-italic.ttf"); /* <--- Todo en minúsculas */
+  font-weight: normal;
+  font-style: italic;
+}
+
+/* --- Embedded monospaced font for consistent code rendering ---
+   Place the font files into your Anki media (collection.media) with the
+   exact names used below (or update the URLs). You can add them by
+   dragging the files into the card editor or copying into the profile's
+   media folder. Using a local font ensures identical metrics on mobile. */
+@font-face {
+  font-family: 'FiraCode';
+  src: url('_fira-code-latin-400-normal.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'FiraCode';
+  src: url('_fira-code-latin-700-normal.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 0.2. Importar el CSS de Prism */
+@import url("_prism.css");
+
+/* Asegura que el código no se colapse antes de que llegue el CSS de Prism */
+pre code {
+    white-space: pre !important;
+    display: block;
+    word-break: normal;
+}
+
+/* === PRE-RENDER: apariencia tenue y consistente === */
+/* Aseguramos tamaño y espaciado iguales antes y después del resaltado */
+pre code,
+pre[class*="language-"],
+code[class*="language-"] {
+  transition: opacity 0.25s ease-in, color 0.2s ease-in;
+  font-size: 0.82em !important; /* Coincide con el tamaño final de Prism */
+  line-height: 1.4 !important;
+  color: rgba(224,224,224,0.75); /* color base ligeramente atenuado */
+}
+
+/* Estado tenue antes de que el motor lo marque como renderizado */
+pre code:not([data-rendered]) {
+  opacity: 0.15; /* más tenue, pero aún legible */
+  color: rgba(224,224,224,0.45);
+}
+pre code[data-rendered] {
+  opacity: 1;
+  color: inherit;
+}
+
+/* Mermaid: mantener una presencia ligera hasta renderizar */
+.mermaid {
+  transition: opacity 0.3s ease-in;
+  min-height: 20px; /* evita salto grande al renderizar */
+}
+.mermaid:not([data-rendered]) {
+  opacity: 0; /* tenue, evita espacio en blanco total */
+}
+.mermaid[data-rendered] {
+  opacity: 1;
+}
+
+
+/* a. Reducir el tamaño de la fuente y el interlineado */
+/* Usamos selectores de mayor especificidad para forzar la misma tipografía
+   antes y después del renderizado (incluyendo los tokens que Prism añade). */
+pre[class*="language-"],
+code[class*="language-"],
+pre[class*="language-"] .token,
+code[class*="language-"] .token {
+  font-size: 0.6em !important; /* Tamaño compacto y consistente */
+  line-height: 1.4 !important;  /* Interlineado consistente */
+  font-family: 'FiraCode', "Cascadia Code", "Fira Code", "Courier New", monospace !important;
+}
+
+/* Pre-render: reducir temporalmente el tamaño hasta que esté marcado como renderizado */
+pre[class*="language-"]:not([data-rendered]),
+code[class*="language-"]:not([data-rendered]) {
+  font-size: 0.6em !important;
+}
+
+/* Asegurar que cualquier token de Prism herede exactamente las propiedades */
+pre[class*="language-"] .token,
+code[class*="language-"] .token {
+  font-family: inherit !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+
+/* b. Ajustar el contenedor (el bloque pre) */
+pre[class*="language-"] {
+    margin: 1em 0;
+    padding: 0.8em !important; /* Reducimos un poco el aire interno */
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    background: #1e1e1e !important; /* Ajusta esto según tu tema de Prism */
+}
+
+/* c. Ajuste para móvil (opcional pero recomendado) */
+/* Si en el celular todavía lo ves grande, puedes bajarlo un poco más */
+.mobile pre[class*="language-"],
+.mobile code[class*="language-"] {
+    font-size: 0.75em !important;
+}
+
+/* d. Asegurar que los números de línea tengan espacio y se vean bien */
+pre.line-numbers {
+    position: relative;
+    padding-left: 3.8em !important; /* Espacio para los números */
+    counter-reset: linenumber;
+}
+
+pre.line-numbers > code {
+    position: relative;
+    white-space: inherit;
+}
+
+/* e. Estilo estético para la columna de números */
+.line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    font-size: 100%;
+    left: -3.8em;
+    width: 3em; 
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+    user-select: none;
+}
+
+/* Asegura que no haya pseudo-elementos duplicando el contenido */
+.line-numbers-rows > span {
+    pointer-events: none;
+    display: block;
+}
+
+.line-numbers-rows > span:before {
+    content: counter(linenumber);
+    display: block;
+    padding-right: 0.8em;
+    text-align: right;
+    color: #999; /* Color de los números */
+}
+
+/* 1. EL CONTENEDOR (LA TARJETA) */
+.card-container {
+  font-family: "Aptos-Embed", "Aptos", "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  font-size: 20px;
+  text-align: left;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+
+  border: 4px solid #444;
+  border-radius: 20px;
+  padding: 20px;
+
+  /* TOPE GARANTIZADO */
+  width: 95%; /* No llega al borde total de la ventana */
+  max-width: 800px; /* Tope real para PC */
+  margin: 15px auto; /* Centra la tarjeta y da aire arriba/abajo */
+
+  box-sizing: border-box;
+  /* Eliminamos overflow:hidden para permitir que el código "salga" 
+       y el sistema de Anki permita el zoom out */
+}
+
+/* 2. TEXTO NORMAL (SIEMPRE DENTRO DE LA TARJETA) */
+.content,
+.back-text,
+.front-text,
+.tags-container,
+details {
+  white-space: normal;
+  overflow-wrap: normal;
+  word-wrap: auto-phrase;
+  max-width: 100%; /* Se acopla al ancho de la tarjeta */
+}
+
+/* 3. CÓDIGO  */
+/* CASO 1: Código en línea (Inline) - El comportamiento por defecto */
+/* Ejemplo: "El atributo <code>name</code> sirve para..." */
+code {
+  display: inline;
+  white-space: pre-wrap;
+
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-family: "Cascadia Code", "Courier New", monospace;
+  font-size: 0.9em;
+  vertical-align: middle;
+
+  /* LA SOLUCIÓN DEL CORTE */
+  white-space: pre-wrap; /* Permite saltos de línea */
+  word-break: break-word; /* Intenta romper por palabras */
+  overflow-wrap: anywhere; /* Si no hay espacios, rompe la cadena donde sea necesario */
+}
+
+/* CASO 2: Contenedor de Bloques (<pre>) */
+/* Esto es lo que envuelve a tus YAML largos */
+pre {
+  display: flex; /* Ayuda a colapsar márgenes internos extraños */
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto; /* AQUÍ está la magia del scroll */
+  background-color: rgba(255, 255, 255, 0.05); /* Fondo para todo el bloque */
+  border-radius: 8px;
+  margin: 10px 0; /* Separación vertical */
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* CASO 3: Código DENTRO de un bloque (<pre><code>...</code>) */
+/* Regla específica para código dentro de bloques pre */
+pre code {
+  display: block; /* Ocupa el espacio del pre */
+  white-space: pre; /* IMPORTANTE: Fuerza a NO romper líneas, activando el scroll del pre */
+  overflow-wrap: normal; /* Anula el 'anywhere' del código inline */
+  word-break: normal; /* Anula el 'break-word' */
+
+  /* Limpieza visual porque el estilo ya lo da el 'pre' */
+  background-color: transparent;
+  padding: 0;
+  border: none;
+  /* color: inherit; /* Hereda el color que tengas definido o el del resaltado de sintaxis */
+}
+
+/* 4. TABLAS */
+table {
+  /* COMPORTAMIENTO: Scrolleable pero compacta */
+  display: block;         /* Permite aplicar overflow */
+  overflow-x: auto;       /* Scroll horizontal si es necesario */
+  width: max-content;     /* CLAVE: La tabla mide EXACTAMENTE lo que mide su contenido, no se estira */
+  max-width: 100%;        /* Pero intenta no pasarse del ancho de la tarjeta inicialmente */
+  
+  /* ESTÉTICA */
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin: 10px 0;         /* Menos margen vertical */
+  font-size: 0.85rem;     /* Texto un poco más pequeño para compactar datos */
+}
+
+/* Celdas y Encabezados */
+th, td {
+  padding: 4px 8px;       /* REDUCIDO: Mucho menos aire dentro de las celdas */
+  border: 1px solid #555;
+  text-align: left;
+  vertical-align: middle; /* Alineado al centro verticalmente se ve más ordenado si hay saltos de línea */
+}
+
+/* Encabezado */
+th {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #64b5f6;
+  font-weight: bold;
+  white-space: nowrap;    /* Los títulos NO se rompen, definen el ancho mínimo de columna */
+}
+
+/* Filas alternas */
+tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* 5. LIMPIEZA DE INTERFAZ */
+#logo-header {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: center; /* Alinea verticalmente si hay varias imágenes */
+}
+
+/* Esta regla fuerza el tamaño a cualquier imagen dentro del header,
+   tenga o no tenga la clase .tag-logo */
+#logo-header img, 
+.tag-logo img {
+  max-width: 80px !important;  /* !important vence a la regla global img de abajo */
+  max-height: 80px !important;
+  width: auto !important;      /* Mantiene la proporción */
+  height: auto !important;
+  
+  border-radius: 10%;
+  background: white;
+  object-fit: contain;         /* Asegura que la imagen entre en la caja de 80px */
+}
+.tags-container {
+  font-size: 0.8em;
+  color: #aaa;
+  margin-bottom: 10px;
+}
+#answer {
+  border: 0;
+  border-top: 1px solid #444;
+  margin: 20px 0;
+}
+
+/* El contenedor de la respuesta */
+.back-text {
+  /* 1. Fondo sutil: Aclara el fondo gris oscuro un 5% */
+  background-color: rgba(255, 255, 255, 0.05);
+
+  /* 3. Espaciado para que el fondo no pegue con el texto */
+  padding: 5px 5px;
+  margin-top: 15px;
+
+  /* 4. Color: Mantenemos tu gris suave o subimos UN POCO el tono sin llegar a blanco */
+  color: #f0f0f0;
+}
+
+/* 6. BOTONES */
+.ia-wrapper {
+  display: grid;
+  /* Crea tantas columnas como quepan, pero ninguna menor a 110px */
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); 
+  gap: 12px;           /* Espacio entre botones */
+  width: 100%;
+  margin-top: 15px;
+}
+
+.ia-button {
+  /* Estética base */
+  background: rgba(255, 255, 255, 0.05);
+  color: #00ffff;
+  border: 1px solid #00ffff44;
+  border-radius: 8px;
+  
+  /* ESPACIADO INTERNO (Resuelve lo del texto pegado) */
+  padding: 10px 15px; 
+  
+  /* Comportamiento */
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap; /* Evita que el texto se parta en dos líneas */
+  
+  /* Asegura que ocupe toda su celda de la grilla */
+  width: 100%; 
+  box-sizing: border-box; 
+  
+  /* Transición suave */
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.ia-button:hover {
+  background: rgba(0, 255, 255, 0.1);
+}
+
+.ia-button.copied {
+  color: #00ff00;
+  border-color: #00ff00;
+  background: rgba(0, 255, 0, 0.1);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Contenedor del diagrama */
+.mermaid {
+    display: flex;
+    justify-content: center; /* Centra el diagrama si es más pequeño que la tarjeta */
+    margin: 20px 0;
+    width: 100%;
+    overflow-x: auto;        /* Permite scroll lateral si el diagrama es inmenso */
+}
+
+/* El gráfico SVG generado */
+img[src$=".svg"]:not(.tag-logo) {
+    /* 1. Invierte todo (Colores mal, Texto bien, Fondo bien) */
+    /* 2. Rota 180 grados (Colores bien, Texto bien, Fondo bien) */
+    filter: invert(1) hue-rotate(180deg) !important;
+
+    background: transparent !important;
+    
+    /* Tus reglas de tamaño (aplicadas a la imagen) */
+    max-width: 100%;
+    max-height: 500px;
+    height: auto;
+    display: block;
+    margin: 0 auto; /* Opcional: para centrarlo */
+}

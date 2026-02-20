@@ -1,0 +1,263 @@
+<div class="anki-chess-interface">
+  <div class="board-area">
+    <div id="board-container" class="default"></div>
+
+    <div class="control-bar">
+      <button id="btn-reset" class="control-btn" title="Inicio" disabled>
+        <svg viewBox="0 0 24 24">
+          <path fill="currentColor" d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+        </svg>
+      </button>
+
+      <button
+        id="btn-play-movie"
+        class="control-btn play-btn"
+        title="Reproducir Película"
+      >
+        <svg id="icon-play" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M8 5v14l11-7z" />
+        </svg>
+        <svg id="icon-pause" viewBox="0 0 24 24" style="display: none">
+          <path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+        </svg>
+      </button>
+
+      <button id="btn-end" class="control-btn" title="Final" disabled>
+        <svg viewBox="0 0 24 24">
+          <path fill="currentColor" d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="sidebar-area">
+    <div class="move-list-placeholder"></div>
+  </div>
+</div>
+
+<div id="data-fen" style="display: none">{{FEN}}</div>
+<div id="data-arrows" style="display: none">{{Arrows}}</div>
+<div id="data-markers" style="display: none">{{Markers}}</div>
+<div id="data-sequence" style="display: none">{{Sequence}}</div>
+
+<script src="_chess_bundle.js"></script>
+<script src="_anki_chess_sprites.js"></script>
+
+<script>
+  (function () {
+    var container = document.getElementById("board-container");
+    var fenElement = document.getElementById("data-fen");
+
+    if (!container || !fenElement) return;
+
+    var fen = fenElement.innerText.trim();
+    container.innerHTML = "";
+
+    // Verificamos que el archivo externo de sprites se haya cargado
+    if (!window.AnkiChessAssets) {
+        console.error("Error: No se encontró _anki_chess_sprites.js");
+        return;
+    }
+
+    function injectSprite(base64String, uniqueId) {
+        // Si ya existe en el DOM, no hacer nada
+        if (document.getElementById(uniqueId)) return;
+        
+        try {
+            // Limpieza básica por si la cadena trae prefijos
+            var base64 = base64String.split(",")[1] || base64String;
+            var decoded = atob(base64);
+            var div = document.createElement("div");
+            div.id = uniqueId;
+            div.style.display = "none";
+            div.innerHTML = decoded;
+            document.body.appendChild(div);
+        } catch (e) { 
+            console.error("Error inyectando sprite:", uniqueId, e); 
+        }
+    }
+
+    // Usamos los datos del objeto global window.AnkiChessAssets
+    injectSprite(window.AnkiChessAssets.standard, "anki-chess-pieces");
+    injectSprite(window.AnkiChessAssets.arrows,   "anki-chess-arrows");
+    injectSprite(window.AnkiChessAssets.markers,  "anki-chess-markers");
+
+    // --- CONFIGURACIÓN DEL TABLERO ---
+    var board; // Declaramos fuera para alcance global en el closure
+    try {
+      board = new AnkiChess.Chessboard(container, {
+        position: fen,
+        assetsUrl: "",
+        style: { aspectRatio: 1, borderType: "thin", cssClass: "pink-ivory" },
+        sprite: { url: "" },
+        extensions: [
+          { class: AnkiChess.Arrows, sprite: { url: "" } },
+          { class: AnkiChess.Markers, sprite: { url: "" } },
+          { class: AnkiChess.PromotionDialog },
+        ],
+      });
+    } catch (e) { console.error("Error init board:", e); return; }
+
+    // --- PARSEO ROBUSTO (Tu versión buena) ---
+    function parseJson(id) {
+        var el = document.getElementById(id);
+        if (!el) return [];
+        var htmlContent = el.innerHTML;
+        htmlContent = htmlContent.replace(/<br\s*\/?>/gi, " ");
+        htmlContent = htmlContent.replace(/<\/div>/gi, " ");
+        htmlContent = htmlContent.replace(/<div>/gi, " ");
+        htmlContent = htmlContent.replace(/<\/p>/gi, " ");
+        htmlContent = htmlContent.replace(/<p>/gi, " ");
+        htmlContent = htmlContent.replace(/<[^>]+>/g, "");
+        var txt = document.createElement("textarea");
+        txt.innerHTML = htmlContent;
+        var cleanText = txt.value;
+        cleanText = cleanText.replace(/[\u00A0\u1680\u180E\u2000-\u200B\u202F\u205F\u3000\uFEFF]/g, " ");
+        cleanText = cleanText.replace(/[“”]/g, '"'); 
+        cleanText = cleanText.replace(/[‘’]/g, "'"); 
+        cleanText = cleanText.trim();
+        if (cleanText === "") return [];
+        try { return JSON.parse(cleanText); } catch (e) { console.error("Error JSON:", e); return []; }
+    }
+
+    // --- DIBUJADO INICIAL ---
+    setTimeout(function () {
+        var markersData = parseJson("data-markers");
+        markersData.forEach(function (m) {
+          var markerConfig = { class: "marker-" + m.type, slice: "markerCircle" };
+          if (m.type.includes("frame")) markerConfig.slice = "markerFrame";
+          else if (m.type.includes("square")) markerConfig.slice = "markerSquare";
+          else if (m.type.includes("dot")) markerConfig.slice = "markerDot";
+          board.addMarker(markerConfig, m.sq);
+        });
+
+        var arrowsData = parseJson("data-arrows");
+        arrowsData.forEach(function (a) {
+          var typeKey = a.type || "default";
+          var arrowConfig = AnkiChess.ARROW_TYPE[typeKey] || { class: "arrow-" + typeKey, slice: "arrow" };
+          board.addArrow(arrowConfig, a.from, a.to);
+        });
+    }, 50);
+
+    // --- LÓGICA DE PELÍCULA ---
+
+    var sequenceData = parseJson("data-sequence");
+    var btnPlay = document.getElementById("btn-play-movie");
+    var iconPlay = document.getElementById("icon-play");
+    var iconPause = document.getElementById("icon-pause");
+    var game = new AnkiChess.Chess(fen);
+
+    if (sequenceData && sequenceData.length > 0) {
+      btnPlay.style.display = "inline-block";
+    }
+
+    var activeAnnotations = { markers: [], arrows: [] };
+
+    function cleanPreviousAnnotations() {
+      // <--- CORREGIDO: Usamos la instancia guardada, no el JSON
+      activeAnnotations.markers.forEach(function (instance) {
+        try { board.removeMarker(instance); } catch (e) {}
+      });
+      activeAnnotations.markers = [];
+
+      activeAnnotations.arrows.forEach(function (instance) {
+        try { board.removeArrow(instance); } catch (e) {}
+      });
+      activeAnnotations.arrows = [];
+    }
+
+    function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+    var isPlaying = false;
+
+    function setPlayState(playing) {
+      if (playing) {
+        btnPlay.classList.add("active");
+        iconPlay.style.display = "none";
+        iconPause.style.display = "block";
+      } else {
+        btnPlay.classList.remove("active");
+        iconPlay.style.display = "block";
+        iconPause.style.display = "none";
+      }
+    }
+
+    btnPlay.addEventListener("click", function () {
+      if (isPlaying) return;
+      setPlayState(true);
+
+      // Reiniciar lógica
+      game = new AnkiChess.Chess(fen);
+      
+      // Reiniciar visual
+      board.setPosition(fen, false).then(function() {
+          cleanPreviousAnnotations();
+          return wait(500);
+      }).then(function() {
+          playSequence(0);
+      });
+      
+      isPlaying = true;
+    });
+
+    function playSequence(index) {
+      if (index >= sequenceData.length) {
+        isPlaying = false;
+        setPlayState(false);
+        return;
+      }
+
+      var step = sequenceData[index];
+      var moveSuccessful = false;
+      var moveSan = (step.move || "").trim(); // <--- CORREGIDO: trim() vital
+
+      if (moveSan) {
+        try {
+          var result = game.move(moveSan);
+          if (result) moveSuccessful = true;
+          else console.error("Illegal:", moveSan);
+        } catch (e) { console.error("Move error:", e); }
+      }
+
+      var animPromise = moveSuccessful 
+        ? board.setPosition(game.fen(), true) 
+        : Promise.resolve();
+
+      animPromise.then(function () {
+          cleanPreviousAnnotations();
+
+          if (step.markers) {
+            step.markers.forEach(function (m) {
+              var config = { class: "marker-" + m.type, slice: "markerCircle" };
+              if (m.type.includes("square")) config.slice = "markerSquare";
+              if (m.type.includes("frame")) config.slice = "markerFrame";
+
+              // <--- CORREGIDO: Guardamos la instancia devuelta
+              var instance = board.addMarker(config, m.sq);
+              if (instance) activeAnnotations.markers.push(instance);
+            });
+          }
+
+          if (step.arrows) {
+            step.arrows.forEach(function (a) {
+              var typeKey = a.type || "default";
+              var config = AnkiChess.ARROW_TYPE[typeKey] || { class: "arrow-" + typeKey, slice: "arrow" };
+
+              // <--- CORREGIDO: Guardamos la instancia devuelta
+              var instance = board.addArrow(config, a.from, a.to);
+              if (instance) activeAnnotations.arrows.push(instance);
+            });
+          }
+
+          return wait(1200);
+        })
+        .then(function () {
+          playSequence(index + 1);
+        })
+        .catch(function (err) {
+          console.error("Anim err:", err);
+          isPlaying = false;
+          setPlayState(false);
+        });
+    }
+  })();
+</script>

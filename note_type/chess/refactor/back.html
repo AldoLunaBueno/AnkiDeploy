@@ -1,0 +1,49 @@
+<div class="card-content">
+    <div class="Title">{{Front}}</div>
+</div>
+
+{{#BackBoard}}
+<div id="wrapper-back" class="anki-chess-interface">
+  <div class="board-area">
+    <div class="board-container-inner default"></div>
+    <div class="control-bar">
+      <button class="control-btn play-btn">
+        <svg class="icon-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z" /></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24" style="display: none"><path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="d-board-back" style="display: none">{{BackBoard}}</div>
+<div id="d-seq-back" style="display: none">{{BackSequence}}</div>
+
+<script>
+  if (window.AnkiChessController) {
+      window.AnkiChessController.init({
+          wrapperId: "wrapper-back",
+          dataIds: {
+              board: "d-board-back",
+              sequence: "d-seq-back"
+          }
+      });
+  }
+</script>
+{{/BackBoard}}
+
+<hr>
+
+<div class="card-content">
+    <div class="Answer">{{Back}}</div>
+</div>
+
+{{#Context}}
+<div class="context-section">
+    <details>
+        <summary>Contexto Adicional</summary>
+        <div class="context-content">
+            {{Context}}
+        </div>
+    </details>
+</div>
+{{/Context}}

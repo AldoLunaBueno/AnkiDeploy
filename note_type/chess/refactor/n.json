@@ -1,0 +1,5 @@
+{ 
+    "fen": "r1b2r1k/pp1p1Npp/2p5/4n3/2B1P3/8/PPP3PP/R1BK3R b - - 0 1",
+    "arrows": [{"from":"f7","to":"h6","type":"default"}],
+    "markers": [{"sq":"h8","type":"frame"}]
+}

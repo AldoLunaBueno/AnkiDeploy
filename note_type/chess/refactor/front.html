@@ -1,0 +1,38 @@
+<div class="card-content">
+    <div class="Title">{{Front}}</div>
+</div>
+
+{{#FrontBoard}}
+<div id="wrapper-front" class="anki-chess-interface">
+  <div class="board-area">
+    <div class="board-container-inner default"></div>
+
+    <div class="control-bar">
+      <button class="control-btn play-btn" title="Reproducir">
+        <svg class="icon-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z" /></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24" style="display: none"><path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+      </button>
+      <button class="control-btn" onclick="/* lógica reset */"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M6 6h2v12H6zm3.5 6l8.5 6V6z" /></svg></button>
+    </div>
+  </div>
+</div>
+
+<div id="d-board-front" style="display: none">{{FrontBoard}}</div>
+<div id="d-seq-front" style="display: none">{{FrontSequence}}</div>
+
+<script src="_chess_bundle.js"></script>
+<script src="_anki_chess_sprites.js"></script>
+<script src="_anki_chess_controller.js"></script>
+
+<script>
+  if (window.AnkiChessController) {
+      window.AnkiChessController.init({
+          wrapperId: "wrapper-front",
+          dataIds: {
+              board: "d-board-front",
+              sequence: "d-seq-front"
+          }
+      });
+  }
+</script>
+{{/FrontBoard}}

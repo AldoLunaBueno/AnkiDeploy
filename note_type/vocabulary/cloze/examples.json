@@ -1,0 +1,325 @@
+{
+  "inflections": [
+    ["m", "f"],
+    ["s", "p"]
+  ],
+  "general_notion": ["Elementos de cierre y ajuste"],
+  "items": [
+    {
+      "word": "ojal",
+      "inflections": {
+        "m.s": "ojal",
+        "m.p": "ojales"
+      },
+      "particular_notion": ["Hendidura en la tela", "Receptor del botón"],
+      "definition": "Hendidura reforzada en una prenda diseñada para que pase a través de ella un botón.",
+      "sentences": [
+        {
+          "template": "El botón es demasiado grande y no pasa por {s}.",
+          "holes": {
+            "m": "este _",
+            "f": "esta _"
+          }
+        },
+        {
+          "template": "Si no refuerzas el borde {s}, la tela se terminará rasgando.",
+          "holes": {
+            "m": "del _",
+            "f": "de la _"
+          }
+        },
+        {
+          "template": "La camisa tiene {p} verticales en la pechera.",
+          "holes": {
+            "m": "unos _",
+            "f": "unas _"
+          }
+        },
+        {
+          "template": "El botón se salía a cada rato porque {s} se había dado de sí con el tiempo.",
+          "holes": {
+            "m": "el _",
+            "f": "la _"
+          }
+        },
+        {
+          "template": "Pelear con una camisa nueva porque {s} que el botón no quiere entrar.",
+          "holes": {
+            "m": "el _ está tan apretado",
+            "f": "la _ está tan apretada"
+          }
+        },
+        {
+          "template": "Si el botón es la moneda, {s} es la ranura de la hucha.",
+          "holes": {
+            "m": "el _",
+            "f": "la _"
+          }
+        },
+        {
+          "template": "Esa herida rematada en la tela por la que tienes que forzar el paso del botón."
+        }
+      ]
+    },
+    {
+      "word": "presilla",
+      "inflections": {
+        "f.s": "presilla",
+        "f.p": "presillas"
+      },
+      "particular_notion": ["Lazo de hilo o tela", "Ojal volante o colgador"],
+      "definition": "Pequeña tira de tela o cordón en forma de lazo que sirve para abrochar botones o colgar la prenda.",
+      "sentences": [
+        {
+          "template": "Al llegar a casa, colgó el abrigo en el perchero usando {s} del cuello.",
+          "holes": {
+            "m": "el _",
+            "f": "la _"
+          }
+        },
+        {
+          "template": "Como el vestido no tiene ojales cortados, los botones se cierran con {p} de hilo.",
+          "holes": {
+            "m": "unos _ finos",
+            "f": "unas _ finas"
+          }
+        },
+        {
+          "template": "Se ha descosido {s} y ahora no puedo sujetar el botón.",
+          "holes": {
+            "m": "el _",
+            "f": "la _"
+          }
+        },
+        {
+          "template": "Llegó a casa y colgó el abrigo en la percha por {s} del cuello.",
+          "holes": {
+            "m": "el _",
+            "f": "la _"
+          }
+        },
+        {
+          "template": "Era un vestido tan delicado que, en vez de agujeros, tenía {p} de hilo para atrapar los botones.",
+          "holes": {
+            "m": "pequeños _",
+            "f": "pequeñas _"
+          }
+        },
+        {
+          "template": "Se te rompió {s} porque tiraste de ella como si fuera un asa.",
+          "holes": {
+            "m": "el _",
+            "f": "la _"
+          }
+        },
+        {
+          "template": "Soy un lazo en el aire esperando cazar un botón, porque la tela es muy fina para cortarla."
+        }
+      ]
+    },
+    {
+      "word": "trabilla",
+      "inflections": {
+        "f.s": "trabilla",
+        "f.p": "trabillas"
+      },
+      "particular_notion": ["Tira para el cinturón", "Común en pantalones"],
+      "definition": "Tira pequeña de tela cosida a la cintura del pantalón o abrigo para sujetar el cinturón.",
+      "sentences": [
+        {
+          "template": "Pasa el cinturón por {p} para que no se te caigan los pantalones.",
+          "holes": {
+            "m": "todos los _",
+            "f": "todas las _"
+          }
+        },
+        {
+          "template": "Se rompió {s} lateral al tirar demasiado fuerte al ajustarse la ropa.",
+          "holes": {
+            "m": "el _",
+            "f": "la _"
+          }
+        },
+        {
+          "template": "Este abrigo lleva {s} en los puños como adorno.",
+          "holes": {
+            "m": "un _",
+            "f": "una _"
+          }
+        },
+        {
+          "template": "Se subió los pantalones tirando de {p} y casi arranca una de cuajo.",
+          "holes": {
+            "m": "los _",
+            "f": "las _"
+          }
+        },
+        {
+          "template": "Lo más molesto del mundo: ponerte el cinturón y darte cuenta de que te saltaste {s} de atrás.",
+          "holes": {
+            "m": "el _",
+            "f": "la _"
+          }
+        },
+        {
+          "template": "Sin cinturón, {p} y tristes alrededor de la cintura.",
+          "holes": {
+            "m": "los _ se ven vacíos",
+            "f": "las _ se ven vacías"
+          }
+        },
+        {
+          "template": "Son los túneles por los que tiene que pasar el tren de tu cinturón para que no descarrile."
+        }
+      ]
+    },
+    {
+      "word": "broche",
+      "inflections": {
+        "m.s": "broche",
+        "m.p": "broches"
+      },
+      "particular_notion": [
+        "Piezas metálicas a presión",
+        "Elemento decorativo"
+      ],
+      "definition": "Conjunto de dos piezas, generalmente metálicas, que encajan a presión para cerrar o adornar una prenda.",
+      "sentences": [
+        {
+          "template": "Escuché un 'clic' metálico al cerrar {s} de la chaqueta.",
+          "holes": {
+            "m": "el _",
+            "f": "la _"
+          }
+        },
+        {
+          "template": "Llevaba {s} dorado adornando la solapa del vestido.",
+          "holes": {
+            "m": "un _",
+            "f": "una _"
+          }
+        },
+        {
+          "template": "Los bolsos modernos suelen usar {p} magnéticos para un cierre rápido.",
+          "holes": {
+            "m": "unos _",
+            "f": "unas _"
+          }
+        },
+        {
+          "template": "Escuchó el clic seco {s} y supo que el bolso estaba bien cerrado.",
+          "holes": {
+            "m": "del _",
+            "f": "de la _"
+          }
+        },
+        {
+          "template": "Odiaba {p} de presión en la ropa del bebé; si tiras muy fuerte, rasgas la tela.",
+          "holes": {
+            "m": "esos _",
+            "f": "esas _"
+          }
+        },
+        {
+          "template": "No necesitas la paciencia de un botón ni la destreza de un lazo, solo aprieta hasta que sientas el tope."
+        },
+        {
+          "template": "Dos mitades metálicas que se besan con fuerza y se separan de un tirón."
+        }
+      ]
+    },
+    {
+      "word": "cremallera",
+      "inflections": {
+        "f.s": "cremallera",
+        "f.p": "cremalleras"
+      },
+      "particular_notion": ["Dientes que se traban", "Cierre longitudinal"],
+      "definition": "Cierre flexible compuesto por dos tiras con dientes que se traban entre sí mediante un cursor.",
+      "sentences": [
+        {
+          "template": "No puedo quitarme la bota porque se ha atascado {s}.",
+          "holes": {
+            "m": "el _",
+            "f": "la _"
+          }
+        },
+        {
+          "template": "Sube {s} hasta arriba que hace mucho frío.",
+          "holes": {
+            "m": "el _",
+            "f": "la _"
+          }
+        },
+        {
+          "template": "Ten cuidado de no pillar la tela con los dientes {s}.",
+          "holes": {
+            "m": "del _",
+            "f": "de la _"
+          }
+        }
+      ]
+    },
+    {
+      "word": "corchete",
+      "inflections": {
+        "m.s": "corchete",
+        "m.p": "corchetes"
+      },
+      "particular_notion": ["Gancho y presilla", "Cierre oculto/seguridad"],
+      "definition": "Pequeño cierre metálico compuesto por un gancho y una presilla o anilla donde este encaja.",
+      "sentences": [
+        {
+          "template": "Es muy difícil abrocharse {p} de la espalda sin ayuda.",
+          "holes": {
+            "m": "los _",
+            "f": "las _"
+          }
+        },
+        {
+          "template": "La falda se cierra con una cremallera y {s} de seguridad en la cintura.",
+          "holes": {
+            "m": "un _",
+            "f": "una _"
+          }
+        },
+        {
+          "template": "Asegúrate de que el gancho entre bien en {s} para que no se abra.",
+          "holes": {
+            "m": "el _",
+            "f": "la _"
+          }
+        }
+      ]
+    },
+    {
+      "word": "hebilla",
+      "inflections": {
+        "f.s": "hebilla",
+        "f.p": "hebillas"
+      },
+      "particular_notion": [
+        "Cierre de correas",
+        "Tiene clavillo/lengüeta",
+        "Permite ajustar tensión"
+      ],
+      "definition": "Pieza de metal u otra materia, generalmente con uno o varios clavos articulados, que sirve para sujetar correas, cinturones o cintas.",
+      "sentences": [
+        {
+          "template": "Tuvo que soltar {s} del cinturón después de la comida copiosa.",
+          "holes": {
+            "m": "el _",
+            "f": "la _"
+          }
+        },
+        {
+          "template": "Asegúrate de que el clavillo entre bien en {s} para que no se suelte.",
+          "holes": {
+            "m": "el _",
+            "f": "la _"
+          }
+        }
+      ]
+    }
+  ]
+}

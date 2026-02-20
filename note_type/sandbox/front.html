@@ -1,0 +1,228 @@
+<div id="main-card" class="card-container">
+  <div id="src-html" style="display: none">{{HTML}}</div>
+  <div id="src-css" style="display: none">{{CSS}}</div>
+  <div id="src-js" style="display: none">{{JS}}</div>
+  <div id="src-data" style="display: none">{{Data}}</div>
+
+  <div id="card-id" style="display: none">{{Front}}</div>
+  <div id="logo-header"></div>
+  <div class="tags-container">
+    {{#Tags}} <span class="tag-label">Tags:</span> {{Tags}} {{/Tags}}
+  </div>
+
+  <div class="content">
+    <h2>{{Front}}</h2>
+  </div>
+
+  <div class="sandbox-wrapper">
+    <div
+      id="challenge-sandbox"
+      style="
+        width: 100%;
+        height: 400px;
+        border: 0;
+        background-color: #1e1e1e;
+        border-radius: 8px;
+      "
+    ></div>
+  </div>
+</div>
+
+<script src="_anki_sandbox.js"></script>
+<script src="_anki_gamification.js"></script>
+<script src="_anki_llm.js"></script>
+
+<script>
+  (function () {
+    // LIMPIEZA INICIAL
+    sessionStorage.removeItem("anki_challenge_status");
+
+    // Función de limpieza de código HTML/JS sucio de Anki
+    const cleanCode = (element) => {
+      if (!element) return "";
+      let str = element.innerHTML;
+      str = str
+        .replace(/<br\s*\/?>/gi, "\n")
+        .replace(/<div>/gi, "\n")
+        .replace(/<\/div>/gi, "");
+      str = str.replace(/<[^>]+>/g, "");
+      str = str
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&amp;/g, "&")
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&nbsp;/g, " ");
+      return str
+        .replace(/[\u2018\u2019]/g, "'")
+        .replace(/[\u201C\u201D]/g, '"');
+    };
+
+    setTimeout(() => {
+      window.currentChallengeStatus = null;
+      const host = document.getElementById("challenge-sandbox");
+      const idElem = document.getElementById("card-id");
+
+      // Elementos fuente
+      const srcHtml = document.getElementById("src-html");
+      const srcCss = document.getElementById("src-css");
+      const srcJs = document.getElementById("src-js");
+      const srcData = document.getElementById("src-data");
+
+      if (!host || !srcHtml) return;
+
+      const rawHtml = srcHtml.innerHTML;
+      const rawCss = cleanCode(srcCss);
+      const rawJs = cleanCode(srcJs);
+      const rawData = cleanCode(srcData) || "{}";
+
+      let challengeDataObj = {};
+      try {
+        challengeDataObj = JSON.parse(rawData);
+      } catch (e) {
+        console.error("Error JSON:", e);
+      }
+
+      // --- CONSTRUCCIÓN SHADOW DOM ---
+      if (host.shadowRoot) host.shadowRoot.innerHTML = "";
+      else host.attachShadow({ mode: "open" });
+
+      const root = host.shadowRoot;
+
+      root.innerHTML = `
+            <style>
+               input, textarea, [contenteditable] {
+                  -webkit-user-select: text !important;
+                  -moz-user-select: text !important;
+                  user-select: text !important;
+                  /* A veces también ayuda en el contenedor padre inmediato */
+                  pointer-events: auto !important; 
+               }
+               /* Estilos base del Shadow Host */
+               :host {
+                  display: block;
+                  width: 100%; height: 100%;
+                  margin: 0; padding: 0;
+                  background-color: #1e1e1e;
+                  position: relative; /* Referencia para el absolute */
+                  overflow: hidden;   /* Corta lo que sobre tras el zoom */
+               }
+
+               /* Wrapper que contiene la página web. 
+                  Usamos absolute para centrarlo perfectamente y 
+                  para que no le afecten los paddings del host */
+               #scale-wrapper {
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  transform-origin: center center;
+                  
+                  /* 'max-content' fuerza al div a ser tan ancho como sus hijos pidan.
+                     Esto evita que el texto empuje al botón fuera de línea. */
+                  width: max-content;
+                  height: max-content;
+                  
+                  /* Backup por si max-content falla en navegadores viejos (AnkiDroid usa WebView moderno, así que ok) */
+                  display: table; 
+               }
+               
+               /* Scrollbars fuera */
+               ::-webkit-scrollbar { display: none; }
+               
+               /* Inyección del CSS del usuario */
+               ${rawCss}
+            </style>
+            
+            <div id="scale-wrapper">
+               ${rawHtml}
+            </div>
+        `;
+
+      // --- LÓGICA DE ESCALADO (ZOOM) ---
+      const wrapper = root.getElementById("scale-wrapper");
+
+      const fitToScreen = () => {
+        if (!wrapper) return;
+
+        // 1. Reseteamos para medir la dimensión REAL del contenido sin restricciones
+        wrapper.style.transform = "translate(-50%, -50%) scale(1)";
+
+        // 2. Medimos. getBoundingClientRect es más preciso que scrollWidth para elementos absolutos
+        const rect = wrapper.getBoundingClientRect();
+        const contentWidth = rect.width;
+        const contentHeight = rect.height;
+
+        // 3. Obtenemos dimensiones de la ventana visible
+        const viewWidth = host.clientWidth;
+        const viewHeight = host.clientHeight;
+
+        // Si algo falló al medir (ej. display none), abortamos
+        if (contentWidth === 0 || contentHeight === 0) return;
+
+        // 4. Calculamos el ratio necesario
+        // El margen de 40px (20px cada lado) evita que los bordes toquen la pared
+        const scaleX = viewWidth / (contentWidth + 40);
+        const scaleY = viewHeight / (contentHeight + 40);
+
+        // Nos quedamos con el menor para asegurar que todo quepa
+        let finalScale = Math.min(scaleX, scaleY);
+
+        // Opcional: Limitamos el zoom máximo a 1.2x para que no se vea gigante en pantallas grandes
+        // Si prefieres que siempre llene, quita el Math.min con 1.2
+        finalScale = Math.min(finalScale, 1.2);
+
+        // 5. Aplicamos. IMPORTANTE: Mantener el translate(-50%, -50%) para el centrado
+        wrapper.style.transform = `translate(-50%, -50%) scale(${finalScale})`;
+      };
+
+      // Observador: si cambias el tamaño de la ventana de Anki, recalcula
+      new ResizeObserver(() => {
+        // Usamos requestAnimationFrame para suavizar
+        requestAnimationFrame(fitToScreen);
+      }).observe(host);
+
+      // Delay inicial para asegurar que imágenes/fuentes cargaron un poco
+      setTimeout(fitToScreen, 100);
+
+      // --- BRIDGE Y LÓGICA DE USUARIO ---
+      const triggerSolved = (payload) => {
+        host.style.border = "4px solid #4CAF50"; // Borde visual de éxito
+        if (typeof runFrontGamification === "function" && idElem) {
+          runFrontGamification(idElem.innerText);
+        }
+        sessionStorage.setItem("anki_challenge_status", "success");
+        window.postMessage({ type: "CHALLENGE_SOLVED", payload: payload }, "*");
+      };
+
+      const triggerFailed = (reason) => {
+        window.postMessage({ type: "CHALLENGE_FAILED", reason: reason }, "*");
+      };
+
+      if (rawJs && rawJs.trim().length > 0) {
+        try {
+          const userScript = new Function(
+            "document",
+            "window",
+            "ChallengeData",
+            "challengeSolved",
+            "challengeFailed",
+            rawJs,
+          );
+          userScript(
+            root,
+            window,
+            challengeDataObj,
+            triggerSolved,
+            triggerFailed,
+          );
+        } catch (err) {
+          const errDiv = document.createElement("div");
+          errDiv.style.cssText =
+            "color:#ff6b6b; background:#330000; padding:10px; font-family:monospace;";
+          errDiv.innerHTML = "<strong>JS Error:</strong><br>" + err.message;
+          root.appendChild(errDiv);
+        }
+      }
+    }, 100); // Pequeño delay general para carga del DOM de Anki
+  })();
+</script>

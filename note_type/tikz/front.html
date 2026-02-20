@@ -1,0 +1,33 @@
+<div id="main-card" class="card-container">
+  <div id="card-id" style="display: none">{{Front}}</div>
+
+  <div id="logo-header"></div>
+
+  <div class="tags-container">
+    {{#Tags}}
+    <span class="tag-label">Tags:</span> {{Tags}} {{/Tags}}
+  </div>
+
+  <div class="content">{{Front}}</div>
+</div>
+
+<script src="_anki_conf_tikz.js"></script>
+<script src="_anki_tags.js"></script>
+<script src="_anki_llm.js"></script>
+<script src="_anki_gamification.js"></script>
+
+<script>
+  (function () {
+    setTimeout(() => {
+
+      if (typeof renderCardStyles === "function") {
+        renderCardStyles("{{Tags}}");
+      }
+
+      const idElem = document.getElementById("card-id");
+      if (typeof runFrontGamification === "function" && idElem) {
+        runFrontGamification(idElem.innerText);
+      }
+    }, 100);
+  })();
+</script>

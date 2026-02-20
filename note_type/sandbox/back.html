@@ -1,0 +1,44 @@
+<div class="back-card-container">
+    
+    <div id="status-header" class="status-banner status-giveup">
+        SOLUCIÓN
+    </div>
+
+    {{#Context}}
+    <div class="context-section">
+        <details>
+            <summary>
+                <span class="summary-icon">💡</span> 
+                Ver Contexto y Explicación
+            </summary>
+            <div class="details-content">
+                {{Context}}
+            </div>
+        </details>
+    </div>
+    {{/Context}}
+
+</div>
+
+<script>
+(function() {
+    const header = document.getElementById('status-header');
+    
+    // RECUPERACIÓN ROBUSTA (PC Y MÓVIL)
+    // 1. Intentamos leer de sessionStorage (lo que guardamos en el Front)
+    const storedStatus = sessionStorage.getItem('anki_challenge_status');
+    
+    // 2. Opcional: Soporte legacy por si acaso en PC sigue usándose la variable
+    const memoryStatus = window.currentChallengeStatus; 
+
+    // Si alguno de los dos dice 'success', es un éxito.
+    if (storedStatus === 'success' || memoryStatus === 'success') {
+        header.innerHTML = "🎉 ¡RETO SUPERADO! 🎉";
+        header.className = "status-banner status-success";
+    } else {
+        // Si no se resolvió
+        header.innerHTML = "👀 SOLUCIÓN (No resuelto)";
+        header.className = "status-banner status-giveup";
+    }
+})();
+</script>

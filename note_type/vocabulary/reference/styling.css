@@ -1,0 +1,525 @@
+/* Estilo del hueco [...] */
+.cloze-blank {
+}
+
+/* La oración */
+.sentence-box {
+    font-size: 1.3em;
+    font-style: italic;
+    margin-bottom: 30px; /* Este margen es tu "buffer" de seguridad */
+    color: #999;
+    
+    /* AGREGAR ESTO: */
+    display: block;       /* Asegura que tome el ancho completo */
+    overflow: visible;    /* Si el texto crece, que se salga de la caja sin empujar nada */
+    box-sizing: border-box;
+}
+
+/* --- INTERACTIVIDAD BOTONES --- */
+
+/* Cursor de mano para saber que es cliqueable */
+.option-btn {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none; /* Evita que se seleccione el texto al hacer clic */
+}
+
+/* Efecto Hover (solo si no se ha respondido aún) */
+.options-container:not(.answered) .option-btn:hover {
+    background: #e1e4e8;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* ESTADO: CORRECTO (Verde Fuerte) */
+.option-btn.correct {
+    background-color: #27ae60 !important;
+    color: white !important;
+    border-color: #219150 !important;
+    font-weight: bold;
+}
+
+/* ESTADO: INCORRECTO (Rojo) */
+.option-btn.incorrect {
+    background-color: #e74c3c !important;
+    color: white !important;
+    border-color: #c0392b !important;
+    animation: shake 0.4s; /* Pequeña vibración */
+}
+
+/* ESTADO: ERA LA CORRECTA (Verde Translúcido / Fantasma) */
+.option-btn.missed-correct {
+    background-color: rgba(39, 174, 96, 0.2) !important; /* Fondo suave */
+    color: #1e8449 !important; /* Texto verde oscuro para leerse bien */
+    border-color: #27ae60 !important;
+    border-style: dashed !important; /* Borde punteado para diferenciar más */
+}
+
+/* BLOQUEO: Una vez respondido, nadie recibe clics */
+.options-container.answered {
+    pointer-events: none; /* Desactiva clics en todo el contenedor */
+}
+
+/* Animación de error (opcional) */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+/* --- CONTEXTO (TOGGLE) - Copiado de la nota Reference --- */
+.context-wrapper {
+    margin-top: 15px;
+    padding-top: 10px;
+    text-align: center;
+    border-top: 1px dashed #444; /* Separador sutil con la respuesta */
+}
+
+/* Botón del toggle */
+details.context-details summary {
+    cursor: pointer;
+    color: #4a90e2;
+    font-size: 0.85em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 8px;
+    transition: color 0.2s;
+    outline: none;
+    list-style: none; /* Oculta triángulo default */
+}
+
+details.context-details summary:hover {
+    color: #82b1ff;
+}
+
+/* Contenedor del contenido */
+.context-content {
+    margin-top: 15px;
+    text-align: left;
+    font-size: 0.9em;
+    color: #aaa;
+}
+
+/* Items individuales */
+.context-item {
+    margin-bottom: 12px;
+    padding-left: 10px;
+    border-left: 2px solid #333;
+    transition: border-color 0.3s;
+}
+
+.context-item.is-current {
+    border-left: 2px solid #66bb6a;
+    color: #fff;
+}
+
+.context-word {
+    font-weight: bold;
+    display: block;
+    color: #ccc;
+}
+
+.context-item.is-current .context-word {
+    color: #66bb6a;
+}
+
+.context-def {
+    font-style: italic;
+    opacity: 0.8;
+    margin-top: 2px;
+}
+
+/* --- CAMPO SEMÁNTICO (Gris discreto) --- */
+.semantic-header {
+    color: #999;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+    font-family: sans-serif;
+    letter-spacing: 0.5px;
+    text-align: left;
+    line-height: 1.2;
+}
+
+/* --- CONTENEDOR DE OPCIONES (Corrección de diseño) --- */
+.options-container {
+    display: flex;           /* Usamos flexbox */
+    flex-direction: column;  /* ¡IMPORTANTE! Esto las pone una debajo de otra */
+    gap: 10px;               /* Espacio entre cada opción */
+    margin-top: 20px;
+    width: 100%;             /* Ocupar ancho disponible */
+}
+
+
+.option-btn:hover { background-color: #f0f0f0; }
+
+/* --- TOGGLE "VER ALTERNATIVAS" (Estilo texto limpio) --- */
+.toggle-text {
+    display: inline-block;
+    margin: 20px auto;
+    color: #0a5fa3;        /* Un azul estándar de enlace */
+    cursor: pointer;
+    font-size: 14px;
+    border-bottom: 1px dashed #0a5fa3; /* Subrayado discontinuo sutil */
+    text-align: center;
+    user-select: none;
+}
+.toggle-text:hover {
+    color: #333;
+    border-bottom-color: #333;
+}
+
+/* Estilo para el hueco dinámico */
+.cloze-hint {
+    display: inline-block;
+    min-width: 60px; /* Evita que el texto baile demasiado horizontalmente */
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* La clase que activa la animación */
+.hint-anim {
+    animation: fadeLoop 1s ease-in-out forwards;
+}
+
+/* Animación: Aparece, se queda quieto, se desvanece al final */
+@keyframes fadeLoop {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }      /* Se mantiene visible la mayor parte del tiempo */
+    100% { opacity: 0; }     /* Se vuelve transparente al final */
+}
+
+/* Ajuste para cuando se revela la respuesta (para que se vea sólido) */
+.cloze-blank.solved {
+    opacity: 1 !important;
+    animation: none !important;
+    font-style: normal;
+    border-bottom: none;
+}
+
+/* Estilo del hueco [...] */
+.cloze-blank {
+}
+
+/* La oración */
+.sentence-box {
+    font-size: 1.3em;
+    font-style: italic;
+    margin-bottom: 30px; /* Este margen es tu "buffer" de seguridad */
+    color: #999;
+    
+    /* AGREGAR ESTO: */
+    display: block;       /* Asegura que tome el ancho completo */
+    overflow: visible;    /* Si el texto crece, que se salga de la caja sin empujar nada */
+    box-sizing: border-box;
+}
+
+/* --- INTERACTIVIDAD BOTONES --- */
+
+/* Cursor de mano para saber que es cliqueable */
+.option-btn {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none; /* Evita que se seleccione el texto al hacer clic */
+}
+
+/* Efecto Hover (solo si no se ha respondido aún) */
+.options-container:not(.answered) .option-btn:hover {
+    background: #e1e4e8;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* ESTADO: CORRECTO (Verde Fuerte) */
+.option-btn.correct {
+    background-color: #27ae60 !important;
+    color: white !important;
+    border-color: #219150 !important;
+    font-weight: bold;
+}
+
+/* ESTADO: INCORRECTO (Rojo) */
+.option-btn.incorrect {
+    background-color: #e74c3c !important;
+    color: white !important;
+    border-color: #c0392b !important;
+    animation: shake 0.4s; /* Pequeña vibración */
+}
+
+/* ESTADO: ERA LA CORRECTA (Verde Translúcido / Fantasma) */
+.option-btn.missed-correct {
+    background-color: rgba(39, 174, 96, 0.2) !important; /* Fondo suave */
+    color: #1e8449 !important; /* Texto verde oscuro para leerse bien */
+    border-color: #27ae60 !important;
+    border-style: dashed !important; /* Borde punteado para diferenciar más */
+}
+
+/* BLOQUEO: Una vez respondido, nadie recibe clics */
+.options-container.answered {
+    pointer-events: none; /* Desactiva clics en todo el contenedor */
+}
+
+/* Animación de error (opcional) */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+/* --- CONTEXTO (TOGGLE) - Copiado de la nota Reference --- */
+.context-wrapper {
+    margin-top: 15px;
+    padding-top: 10px;
+    text-align: center;
+    border-top: 1px dashed #444; /* Separador sutil con la respuesta */
+}
+
+/* Botón del toggle */
+details.context-details summary {
+    cursor: pointer;
+    color: #4a90e2;
+    font-size: 0.85em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 8px;
+    transition: color 0.2s;
+    outline: none;
+    list-style: none; /* Oculta triángulo default */
+}
+
+details.context-details summary:hover {
+    color: #82b1ff;
+}
+
+/* Contenedor del contenido */
+.context-content {
+    margin-top: 15px;
+    text-align: left;
+    font-size: 0.9em;
+    color: #aaa;
+}
+
+/* Items individuales */
+.context-item {
+    margin-bottom: 12px;
+    padding-left: 10px;
+    border-left: 2px solid #333;
+    transition: border-color 0.3s;
+}
+
+.context-item.is-current {
+    border-left: 2px solid #66bb6a;
+    color: #fff;
+}
+
+.context-word {
+    font-weight: bold;
+    display: block;
+    color: #ccc;
+}
+
+.context-item.is-current .context-word {
+    color: #66bb6a;
+}
+
+.context-def {
+    font-style: italic;
+    opacity: 0.8;
+    margin-top: 2px;
+}
+
+/* --- CAMPO SEMÁNTICO (Gris discreto) --- */
+.semantic-header {
+    color: #999;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+    font-family: sans-serif;
+    letter-spacing: 0.5px;
+    text-align: left;
+    line-height: 1.2;
+}
+
+/* --- CONTENEDOR DE OPCIONES (Corrección de diseño) --- */
+.options-container {
+    display: flex;           /* Usamos flexbox */
+    flex-direction: column;  /* ¡IMPORTANTE! Esto las pone una debajo de otra */
+    gap: 10px;               /* Espacio entre cada opción */
+    margin-top: 20px;
+    width: 100%;             /* Ocupar ancho disponible */
+}
+
+
+.option-btn:hover { background-color: #f0f0f0; }
+
+/* --- TOGGLE "VER ALTERNATIVAS" (Estilo texto limpio) --- */
+.toggle-text {
+    display: inline-block;
+    margin: 20px auto;
+    color: #0a5fa3;        /* Un azul estándar de enlace */
+    cursor: pointer;
+    font-size: 14px;
+    border-bottom: 1px dashed #0a5fa3; /* Subrayado discontinuo sutil */
+    text-align: center;
+    user-select: none;
+}
+.toggle-text:hover {
+    color: #333;
+    border-bottom-color: #333;
+}
+
+/* Estilo para el hueco dinámico */
+.cloze-hint {
+    display: inline-block;
+    min-width: 60px; /* Evita que el texto baile demasiado horizontalmente */
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* La clase que activa la animación */
+.hint-anim {
+    animation: fadeLoop 1s ease-in-out forwards;
+}
+
+/* Animación: Aparece, se queda quieto, se desvanece al final */
+@keyframes fadeLoop {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }      /* Se mantiene visible la mayor parte del tiempo */
+    100% { opacity: 0; }     /* Se vuelve transparente al final */
+}
+
+/* Ajuste para cuando se revela la respuesta (para que se vea sólido) */
+.cloze-blank.solved {
+    opacity: 1 !important;
+    animation: none !important;
+    font-style: normal;
+    border-bottom: none;
+}
+
+/* Estilo para el contenedor de cada item en la lista */
+.context-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    /* Flexbox para poner texto a la izquierda y quizás el botón de imagen a la derecha, 
+       o columna si prefieres la imagen abajo */
+    display: flex; 
+    flex-direction: column; 
+    gap: 5px;
+}
+
+
+/* El toggle de la imagen */
+.image-toggle {
+    margin-top: 5px;
+    font-size: 0.9em;
+}
+
+.image-toggle summary {
+    cursor: pointer;
+    color: #0077cc; /* Color tipo enlace */
+    font-weight: bold;
+    user-select: none;
+    list-style: none; /* Opcional: quita el triángulo default en algunos navegadores */
+}
+
+.image-toggle summary:hover {
+    text-decoration: underline;
+}
+
+/* Contenedor de la imagen para que no sea gigante */
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-top: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    display: block;
+}
+
+/* --- ANKI INTERACTIVE IMAGE STYLES --- */
+
+.aii-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    line-height: 0;
+}
+
+@media (max-width: 600px) {
+    .aii-container { max-width: 100%; }
+}
+
+.aii-container img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.aii-container svg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Ocultar formas por defecto */
+.aii-container svg polygon,
+.aii-container svg rect,
+.aii-container svg circle,
+.aii-container svg path {
+    opacity: 0;
+    transition: opacity 0.3s ease; /* Suavizado opcional */
+}
+
+/* --- ESTADO ACTIVO (La respuesta correcta) --- */
+.aii-container svg .aii-active-shape {
+    stroke: #ff00008f;
+    fill: #ff000013;
+    stroke-width: 0.5px;
+    animation: aii-blink 2.5s infinite;
+    opacity: 1;
+}
+
+@keyframes aii-blink {
+    0% { opacity: 1; }
+    40% { opacity: 0; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* --- MODO REVELAR (Antiguo Debug) --- */
+.aii-container.reveal-mode svg rect,
+.aii-container.reveal-mode svg polygon,
+.aii-container.reveal-mode svg path,
+.aii-container.reveal-mode svg circle {
+    stroke: #00ff00 !important;
+    stroke-width: 0.5px !important;
+    fill: rgba(0, 255, 0, 0.2) !important;
+    opacity: 1 !important;
+    animation: none;
+}
+
+/* Etiquetas de texto generadas */
+.aii-label {
+    display: none;
+    font-family: sans-serif;
+    font-size: 3px; /* Escala SVG 0-100 */
+    fill: white;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    stroke: black;
+    stroke-width: 0.1px;
+    pointer-events: none;
+    text-shadow: 0px 0px 1px black;
+}
+
+.aii-container.reveal-mode .aii-label {
+    display: block;
+}

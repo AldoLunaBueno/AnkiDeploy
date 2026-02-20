@@ -1,0 +1,72 @@
+<div id="main-card" class="card-container">
+  <div id="card-id" style="display: none">{{Front}}</div>
+
+  <div id="logo-header"></div>
+
+  {{#Tags}}
+  <div class="tags-container">
+    <span class="tag-label">Tags:</span> {{Tags}}
+  </div>
+  {{/Tags}}
+
+  <div class="content front-text">{{Front}}</div>
+
+  <hr id="answer" />
+
+  <div class="content back-text">{{Back}}</div>
+  <br />
+
+  {{#Context}}
+  <details>
+    <summary>Contexto</summary>
+    <br />
+    {{Context}}
+  </details>
+  {{/Context}}
+
+<div id="prompt-data" style="display: none;">
+  <textarea class="anki-field-raw" data-key="Front">{{Front}}</textarea>
+  <textarea class="anki-field-raw" data-key="Back">{{Back}}</textarea>
+  <textarea class="anki-field-raw" data-key="Tags">{{Tags}}</textarea>
+  <textarea class="anki-field-raw" data-key="Improve">{{Improve}}</textarea>
+</div>
+
+  <div class="ia-wrapper">
+    <button
+      class="ia-button"
+      onclick="copyPrompt(this, 'explicar')"
+      title="Explicación detallada y técnica"
+    >
+      🤖 Explicar
+    </button>
+
+    <button
+      class="ia-button"
+      onclick="copyPrompt(this, 'graficar')"
+      title="Generar diagrama Mermaid"
+    >
+      🎨 Graficar
+    </button>
+  </div>
+</div>
+
+<script src="_anki_conf_tikz.js"></script>
+<script src="_anki_tags.js"></script>
+<script src="_anki_llm.js"></script>
+<script src="_anki_gamification.js"></script>
+
+<script>
+  (function () {
+    setTimeout(() => {
+
+      if (typeof renderCardStyles === "function") {
+        renderCardStyles("{{Tags}}");
+      }
+
+      const idElem = document.getElementById("card-id");
+      if (typeof runFrontGamification === "function" && idElem) {
+        runBackGamification(idElem.innerText);
+      }
+    }, 10);
+  })();
+</script>

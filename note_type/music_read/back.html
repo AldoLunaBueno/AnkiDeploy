@@ -1,0 +1,39 @@
+<div class="modo-lectura reverso">
+  <div class="instrucciones">{{Front}}</div>
+
+  <div class="card">
+    <div id="paper"></div>
+  </div>
+
+  <div id="audio"></div>
+  <div class="respuesta">{{Back}}</div>
+
+  <hr />
+
+  {{#Context}}
+  <details>
+    <summary>Contexto</summary>
+    <br />
+    {{Context}}
+  </details>
+  {{/Context}}
+</div>
+
+<script src="_abc.js"></script>
+<script src="_anki_music_engine.js"></script>
+<link rel="stylesheet" href="_abc.css" />
+
+<script>
+  (function () {
+    var checkReady = setInterval(function () {
+      if (typeof ABCJS !== "undefined" && window.AnkiABC) {
+        clearInterval(checkReady);
+
+        // Ejecutamos el motor: pasamos el código y pedimos SÍ audio
+        window.AnkiABC.render(`{{Front_ABC_Code}}`, {
+          showAudio: true,
+        });
+      }
+    }, 100);
+  })();
+</script>
